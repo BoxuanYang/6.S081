@@ -3,9 +3,13 @@
 #include "user/user.h"
 #include "kernel/fs.h"
 
+/**
+ * Given a path, return a string pointer 
+ * which stores the name of the last item
+ * in the path.
+*/
 char*
-fmtname(char *path)
-{
+fmtname(char *path){
   static char buf[DIRSIZ+1];
   char *p;
 
@@ -51,7 +55,7 @@ ls(char *path)
       printf("ls: path too long\n");
       break;
     }
-    strcpy(buf, path);
+    strcpy(buf, path); // buf := path
     p = buf+strlen(buf);
     *p++ = '/';
     while(read(fd, &de, sizeof(de)) == sizeof(de)){
@@ -59,10 +63,13 @@ ls(char *path)
         continue;
       memmove(p, de.name, DIRSIZ);
       p[DIRSIZ] = 0;
+      // DIRSIZ == 14
       if(stat(buf, &st) < 0){
         printf("ls: cannot stat %s\n", buf);
         continue;
       }
+
+      // This line does the job
       printf("%s %d %d %d\n", fmtname(buf), st.type, st.ino, st.size);
     }
     break;
